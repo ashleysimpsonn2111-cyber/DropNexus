@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireless Earbuds - DropNexus</title>
+  <link rel="stylesheet" href="product.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <a href="Home.html" class="logo">DropNexus</a>
+      <div class="search-bar">
+        <input type="search" placeholder="Search products...">
+        <button>🔍</button>
+      </div>
+      <div class="nav-icons">
+        <a href="Cart.html">🛒 <span class="cart-count">0</span></a>
+        <span>👤</span>
+      </div>
+    </nav>
+  </header>
+
+  <main class="product-page">
+    <div class="container">
+      <a href="Home.html" class="back-link">&larr; Back to Shop</a>
+      
+      <div class="product-main">
+        <!-- Image Gallery -->
+        <div class="image-gallery">
+          <div class="main-image">
+            <img src="https://via.placeholder.com/500x500?text=Earbuds+Main" alt="Wireless Earbuds" id="mainImg">
+          </div>
+          <div class="thumbnails">
+            <img src="https://via.placeholder.com/80x80?text=View+1" alt="Thumb 1" onclick="changeImage(this.src)">
+            <img src="https://via.placeholder.com/80x80?text=View+2" alt="Thumb 2" onclick="changeImage(this.src)">
+            <img src="https://via.placeholder.com/80x80?text=View+3" alt="Thumb 3" onclick="changeImage(this.src)">
+            <img src="https://via.placeholder.com/80x80?text=View+4" alt="Thumb 4" onclick="changeImage(this.src)">
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+          <h1>Wireless Earbuds Pro</h1>
+          <div class="rating">★★★★★ 4.8 (127 reviews)</div>
+          <div class="price">$29.99</div>
+          <p class="stock">In stock - Ships in 3-5 days</p>
+
+          <div class="quantity-selector">
+            <label>Quantity:</label>
+            <input type="number" value="1" min="1" max="10">
+          </div>
+
+          <button class="add-cart-btn" onclick="addToCart(1, 'Wireless Earbuds Pro', 29.99, 'https://via.placeholder.com/100x100?text=Earbuds')">Add to Cart</button>
+          <button class="buy-now-btn" onclick="buyNow(1, 'Wireless Earbuds Pro', 29.99, 'https://via.placeholder.com/100x100?text=Earbuds')">Buy Now</button>
+
+          <div class="trust-badges">
+            <span>🛡️ Secure Checkout</span>
+            <span>🌍 Worldwide Shipping</span>
+            <span>↩️ 30-Day Returns</span>
+          </div>
+
+          <div class="product-description">
+            <h3>Description</h3>
+            <ul>
+              <li>Premium sound quality with noise cancellation</li>
+              <li>20-hour battery life per charge</li>
+              <li>IPX7 waterproof rating</li>
+              <li>Touch controls and wireless charging case</li>
+              <li>Compatible with iOS and Android</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <section class="reviews">
+        <h2>Reviews (127)</h2>
+        <div class="review">
+          <div class="review-header">
+            <span class="reviewer">Sarah K. ★★★★★</span>
+            <span class="review-date">2 days ago</span>
+          </div>
+          <p>"Amazing sound and battery life! Worth every penny."</p>
+        </div>
+        <div class="review">
+          <div class="review-header">
+            <span class="reviewer">Mike D. ★★★★☆</span>
+            <span class="review-date">1 week ago</span>
+          </div>
+          <p>"Great earbuds for the price. Shipping was super fast."</p>
+        </div>
+        <a href="#" class="write-review">Write a Review</a>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div>DropNexus © 2026. All rights reserved.</div>
+      <div>Privacy | Terms | Support</div>
+    </div>
+  </footer>
+
+  <script>
+    function addToCart(id, name, price, image) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let existingItem = cart.find(item => item.id === id);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({ id, name, price, image, quantity: 1 });
+      }
+      
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+      alert(name + ' added to cart!');
+    }
+
+    function buyNow(id, name, price, image) {
+      addToCart(id, name, price, image);
+      window.location.href = 'Cart.html';
+    }
+
+    function updateCartCount() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.querySelector('.cart-count').textContent = totalItems;
+    }
+
+    // Update cart count on page load
+    window.onload = function() {
+      updateCartCount();
+    };
+
+    function changeImage(src) {
+      document.getElementById('mainImg').src = src.replace('80x80', '500x500');
+    }
+  </script>
+</body>
+</html>

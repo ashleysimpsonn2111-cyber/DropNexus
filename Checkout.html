@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - DropNexus</title>
+  <link rel="stylesheet" href="checkout.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- PayPal SDK - Replace YOUR_CLIENT_ID with your actual PayPal Client ID -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"></script>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="Home.html" class="logo">DropNexus</a>
+      <div class="nav-icons">
+        <a href="Cart.html" style="text-decoration: none; color: inherit;">🛒 <span class="cart-count">2</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="checkout-page">
+    <div class="container">
+      <div class="checkout-header">
+        <h1>Checkout</h1>
+        <div class="progress-bar">
+          <div class="step active" id="step1">1. Shipping</div>
+          <div class="step" id="step2">2. Payment</div>
+          <div class="step" id="step3">3. Review</div>
+        </div>
+      </div>
+
+      <div class="checkout-content">
+        <!-- Step 1: Shipping -->
+        <div class="checkout-step" id="shipping-step">
+          <div class="billing-form">
+            <h2>Shipping Address</h2>
+            <form id="shipping-form">
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="full-name" placeholder="John Doe" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Street Address *</label>
+                  <input type="text" id="address" placeholder="123 Main Street" required>
+                </div>
+                <div class="form-group">
+                  <label>Apt/Unit (Optional)</label>
+                  <input type="text" id="apartment" placeholder="Apt 4B">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>City *</label>
+                  <input type="text" id="city" placeholder="New York" required>
+                </div>
+                <div class="form-group">
+                  <label>State/Province *</label>
+                  <input type="text" id="state" placeholder="NY" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>ZIP/Postal Code *</label>
+                  <input type="text" id="zip" placeholder="10001" required>
+                </div>
+                <div class="form-group">
+                  <label>Country *</label>
+                  <input type="text" id="country" placeholder="United States" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Email *</label>
+                  <input type="email" id="email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                  <label>Phone Number *</label>
+                  <input type="tel" id="phone" placeholder="+1 (555) 123-4567" required>
+                </div>
+              </div>
+              <button type="button" class="btn-next" onclick="goToPayment()">Continue to Payment</button>
+            </form>
+          </div>
+
+          <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div id="summary-items">
+              <!-- Items will be loaded here -->
+            </div>
+            <div class="summary-row">
+              <span>Subtotal:</span> <span id="summary-subtotal">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping:</span> <span id="summary-shipping">Free</span>
+            </div>
+            <div class="summary-row total">
+              <span>Order Total:</span> <span id="summary-total">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Payment -->
+        <div class="checkout-step" id="payment-step" style="display: none;">
+          <div class="billing-form">
+            <h2>Payment Method</h2>
+            <div class="payment-methods">
+              <label class="payment-option">
+                <input type="radio" name="payment" value="credit" checked onchange="showPaymentForm('credit')">
+                <span>💳 Credit Card</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment" value="debit" onchange="showPaymentForm('debit')">
+                <span>💰 Debit Card</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment" value="paypal" onchange="showPaymentForm('paypal')">
+                <span>🅿️ PayPal</span>
+              </label>
+            </div>
+
+            <!-- Card Payment Form -->
+            <form id="card-form" style="display: block;">
+              <h3>Card Details</h3>
+              <div class="form-group">
+                <label>Cardholder Name *</label>
+                <input type="text" id="cardholder" placeholder="John Doe" required>
+              </div>
+              <div class="form-group">
+                <label>Card Number *</label>
+                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Expiry Date *</label>
+                  <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" required>
+                </div>
+                <div class="form-group">
+                  <label>CVV *</label>
+                  <input type="text" id="cvv" placeholder="123" maxlength="4" required>
+                </div>
+              </div>
+
+              <h3>Billing Address</h3>
+              <label class="checkbox">
+                <input type="checkbox" id="same-as-shipping" checked onchange="toggleBillingForm()">
+                Same as shipping address
+              </label>
+
+              <div id="billing-form" style="display: none;">
+                <div class="form-group">
+                  <label>Full Name *</label>
+                  <input type="text" id="billing-name" placeholder="John Doe">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Street Address *</label>
+                    <input type="text" id="billing-address" placeholder="123 Main Street">
+                  </div>
+                  <div class="form-group">
+                    <label>Apt/Unit (Optional)</label>
+                    <input type="text" id="billing-apartment" placeholder="Apt 4B">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>City *</label>
+                    <input type="text" id="billing-city" placeholder="New York">
+                  </div>
+                  <div class="form-group">
+                    <label>State/Province *</label>
+                    <input type="text" id="billing-state" placeholder="NY">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>ZIP/Postal Code *</label>
+                    <input type="text" id="billing-zip" placeholder="10001">
+                  </div>
+                  <div class="form-group">
+                    <label>Country *</label>
+                    <input type="text" id="billing-country" placeholder="United States">
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <!-- PayPal Form -->
+            <div id="paypal-form" style="display: none;">
+              <div class="info-box">
+                <p>💳 Complete your payment securely with PayPal:</p>
+              </div>
+              <div id="paypal-buttons" style="margin: 2rem 0;"></div>
+            </div>
+
+            <h3>Payment Agreement</h3>
+            <div class="agreement-box">
+              <label class="checkbox">
+                <input type="checkbox" id="agree-terms" required>
+                I agree to the <a href="#" target="_blank">Terms & Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" id="agree-payment" required>
+                I authorize DropNexus to charge my payment method for this order
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-back" onclick="goToShipping()">Back to Shipping</button>
+              <button type="button" class="btn-next" onclick="goToReview()">Review Order</button>
+            </div>
+          </div>
+
+          <div class="order-summary">
+            <h2>Order Summary</h2>
+            <div id="summary-items-payment">
+              <!-- Items will be loaded here -->
+            </div>
+            <div class="summary-row">
+              <span>Subtotal:</span> <span id="summary-subtotal-payment">$0.00</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping:</span> <span id="summary-shipping-payment">Free</span>
+            </div>
+            <div class="summary-row total">
+              <span>Order Total:</span> <span id="summary-total-payment">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Review -->
+        <div class="checkout-step" id="review-step" style="display: none;">
+          <div class="review-content">
+            <h2>Order Review</h2>
+            
+            <div class="review-section">
+              <h3>Shipping Address</h3>
+              <div id="review-shipping" class="review-box">
+                <!-- Shipping details will be shown here -->
+              </div>
+              <button type="button" class="btn-edit" onclick="goToShipping()">Edit</button>
+            </div>
+
+            <div class="review-section">
+              <h3>Payment Method</h3>
+              <div id="review-payment" class="review-box">
+                <!-- Payment details will be shown here -->
+              </div>
+              <button type="button" class="btn-edit" onclick="goToPayment()">Edit</button>
+            </div>
+
+            <div class="review-section">
+              <h3>Order Items</h3>
+              <div id="review-items" class="review-box">
+                <!-- Order items will be shown here -->
+              </div>
+            </div>
+
+            <div class="order-summary">
+              <h2>Final Summary</h2>
+              <div id="summary-items-review">
+                <!-- Items will be loaded here -->
+              </div>
+              <div class="summary-row">
+                <span>Subtotal:</span> <span id="summary-subtotal-review">$0.00</span>
+              </div>
+              <div class="summary-row">
+                <span>Shipping:</span> <span id="summary-shipping-review">Free</span>
+              </div>
+              <div class="summary-row total">
+                <span>Order Total:</span> <span id="summary-total-review">$0.00</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-back" onclick="goToPayment()">Back to Payment</button>
+              <button type="button" class="btn-place-order" onclick="placeOrder()">Place Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div>DropNexus © 2026. Secure checkout. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    let cartData = {};
+
+    function loadCartSummary() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let subtotal = 0;
+      let summaryHTML = '';
+
+      if (cart.length === 0) {
+        summaryHTML = '<p>Your cart is empty. <a href="Cart.html">View Cart</a></p>';
+      } else {
+        cart.forEach(item => {
+          let itemTotal = item.price * item.quantity;
+          subtotal += itemTotal;
+          summaryHTML += `
+            <div class="summary-item">
+              <span>${item.name} x${item.quantity}</span>
+              <span>$${itemTotal.toFixed(2)}</span>
+            </div>
+          `;
+        });
+      }
+
+      cartData = { cart, subtotal };
+
+      // Update all summary sections
+      document.getElementById('summary-items').innerHTML = summaryHTML;
+      document.getElementById('summary-items-payment').innerHTML = summaryHTML;
+      document.getElementById('summary-items-review').innerHTML = summaryHTML;
+
+      const summaryElements = ['summary-subtotal', 'summary-subtotal-payment', 'summary-subtotal-review'];
+      const totalElements = ['summary-total', 'summary-total-payment', 'summary-total-review'];
+
+      summaryElements.forEach(id => {
+        document.getElementById(id).textContent = '$' + subtotal.toFixed(2);
+      });
+
+      totalElements.forEach(id => {
+        document.getElementById(id).textContent = '$' + subtotal.toFixed(2);
+      });
+    }
+
+    function updateCartCount() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.querySelector('.cart-count').textContent = totalItems;
+    }
+
+    function goToPayment() {
+      if (validateShippingForm()) {
+        document.getElementById('shipping-step').style.display = 'none';
+        document.getElementById('payment-step').style.display = 'block';
+        document.getElementById('review-step').style.display = 'none';
+        
+        updateProgressBar(2);
+      }
+    }
+
+    function goToShipping() {
+      document.getElementById('shipping-step').style.display = 'block';
+      document.getElementById('payment-step').style.display = 'none';
+      document.getElementById('review-step').style.display = 'none';
+      
+      updateProgressBar(1);
+    }
+
+    function goToReview() {
+      if (validatePaymentForm()) {
+        document.getElementById('shipping-step').style.display = 'none';
+        document.getElementById('payment-step').style.display = 'none';
+        document.getElementById('review-step').style.display = 'block';
+        
+        updateProgressBar(3);
+        populateReview();
+      }
+    }
+
+    function updateProgressBar(step) {
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step3').classList.remove('active');
+      
+      if (step >= 1) document.getElementById('step1').classList.add('active');
+      if (step >= 2) document.getElementById('step2').classList.add('active');
+      if (step >= 3) document.getElementById('step3').classList.add('active');
+    }
+
+    function validateShippingForm() {
+      const form = document.getElementById('shipping-form');
+      if (!form.checkValidity()) {
+        alert('Please fill in all required shipping fields');
+        form.reportValidity();
+        return false;
+      }
+      return true;
+    }
+
+    function validatePaymentForm() {
+      const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+      
+      if (!document.getElementById('agree-terms').checked) {
+        alert('Please agree to the Terms & Conditions');
+        return false;
+      }
+      if (!document.getElementById('agree-payment').checked) {
+        alert('Please agree to the payment authorization');
+        return false;
+      }
+
+      if (paymentMethod === 'credit' || paymentMethod === 'debit') {
+        if (!validateCardForm()) return false;
+      } else if (paymentMethod === 'paypal') {
+        // For PayPal, user must click PayPal button first
+        alert('Please complete PayPal payment using the button below');
+        return false;
+      }
+
+      return true;
+    }
+
+    function validateCardForm() {
+      const cardholder = document.getElementById('cardholder').value;
+      const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
+      const expiry = document.getElementById('expiry').value;
+      const cvv = document.getElementById('cvv').value;
+
+      if (!cardholder) {
+        alert('Please enter cardholder name');
+        return false;
+      }
+      if (cardNumber.length < 13 || cardNumber.length > 19) {
+        alert('Please enter a valid card number');
+        return false;
+      }
+      if (!expiry.match(/^\d{2}\/\d{2}$/)) {
+        alert('Please enter expiry date in MM/YY format');
+        return false;
+      }
+      if (cvv.length < 3 || cvv.length > 4) {
+        alert('Please enter a valid CVV');
+        return false;
+      }
+
+      return true;
+    }
+
+    function showPaymentForm(method) {
+      document.getElementById('card-form').style.display = method === 'credit' || method === 'debit' ? 'block' : 'none';
+      document.getElementById('paypal-form').style.display = method === 'paypal' ? 'block' : 'none';
+      
+      // Reinitialize PayPal buttons when PayPal is selected
+      if (method === 'paypal') {
+        document.getElementById('paypal-buttons').innerHTML = '';
+        initPayPalButtons();
+      }
+    }
+
+    function toggleBillingForm() {
+      const sameAsShipping = document.getElementById('same-as-shipping').checked;
+      document.getElementById('billing-form').style.display = sameAsShipping ? 'none' : 'block';
+    }
+
+    function populateReview() {
+      const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+      
+      // Shipping address review
+      const shippingHTML = `
+        <p><strong>${document.getElementById('full-name').value}</strong></p>
+        <p>${document.getElementById('address').value}${document.getElementById('apartment').value ? ' ' + document.getElementById('apartment').value : ''}</p>
+        <p>${document.getElementById('city').value}, ${document.getElementById('state').value} ${document.getElementById('zip').value}</p>
+        <p>${document.getElementById('country').value}</p>
+        <p>Email: ${document.getElementById('email').value}</p>
+        <p>Phone: ${document.getElementById('phone').value}</p>
+      `;
+      document.getElementById('review-shipping').innerHTML = shippingHTML;
+
+      // Payment method review
+      let paymentHTML = '';
+      if (paymentMethod === 'credit' || paymentMethod === 'debit') {
+        const cardNum = document.getElementById('card-number').value.slice(-4);
+        const methodName = paymentMethod === 'credit' ? 'Credit Card' : 'Debit Card';
+        paymentHTML = `
+          <p><strong>${methodName}</strong></p>
+          <p>Cardholder: ${document.getElementById('cardholder').value}</p>
+          <p>Card ending in: ****${cardNum}</p>
+        `;
+      } else if (paymentMethod === 'paypal') {
+        paymentHTML = `
+          <p><strong>PayPal</strong></p>
+          <p>Transaction ID: ${window.paypalTransactionId || 'Pending...'}</p>
+        `;
+      }
+      document.getElementById('review-payment').innerHTML = paymentHTML;
+
+      // Items review
+      let itemsHTML = '';
+      cartData.cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        itemsHTML += `
+          <div class="summary-item">
+            <span>${item.name} x${item.quantity}</span>
+            <span>$${itemTotal.toFixed(2)}</span>
+          </div>
+        `;
+      });
+      document.getElementById('review-items').innerHTML = itemsHTML;
+    }
+
+    function placeOrder() {
+      const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+      
+      if (paymentMethod === 'paypal') {
+        // PayPal orders are handled by PayPal button onclick
+        alert('Please click the "Pay with PayPal" button');
+        return;
+      }
+      
+      alert('Order placed successfully! Order number: #' + Math.floor(100000 + Math.random() * 900000));
+      localStorage.removeItem('cart');
+      updateCartCount();
+      window.location.href = 'Home.html';
+    }
+
+    // PayPal Payment Processing
+    function initPayPalButtons() {
+      if (typeof paypal === 'undefined') {
+        console.log('PayPal SDK not loaded yet');
+        setTimeout(initPayPalButtons, 500);
+        return;
+      }
+
+      paypal.Buttons({
+        // Create order on the server
+        createOrder: function(data, actions) {
+          // Validate before creating order
+          if (!document.getElementById('agree-terms').checked) {
+            alert('Please agree to the Terms & Conditions');
+            return;
+          }
+          if (!document.getElementById('agree-payment').checked) {
+            alert('Please agree to the payment authorization');
+            return;
+          }
+
+          let cart = JSON.parse(localStorage.getItem('cart')) || [];
+          let total = 0;
+          let items = [];
+          
+          cart.forEach(item => {
+            let itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            items.push({
+              name: item.name,
+              unit_amount: {
+                currency_code: 'USD',
+                value: item.price.toFixed(2)
+              },
+              quantity: item.quantity
+            });
+          });
+
+          return actions.order.create({
+            intent: 'CAPTURE',
+            purchase_units: [{
+              amount: {
+                currency_code: 'USD',
+                value: total.toFixed(2),
+                breakdown: {
+                  item_total: {
+                    currency_code: 'USD',
+                    value: total.toFixed(2)
+                  }
+                }
+              },
+              items: items,
+              shipping: {
+                name: {
+                  full_name: document.getElementById('full-name').value
+                },
+                address: {
+                  address_line_1: document.getElementById('address').value,
+                  admin_area_2: document.getElementById('city').value,
+                  admin_area_1: document.getElementById('state').value,
+                  postal_code: document.getElementById('zip').value,
+                  country_code: 'US'
+                }
+              },
+              description: 'DropNexus Order - ' + cart.length + ' items'
+            }],
+            payer: {
+              email_address: document.getElementById('email').value,
+              name: {
+                given_name: document.getElementById('full-name').value.split(' ')[0],
+                surname: document.getElementById('full-name').value.split(' ').slice(1).join(' ')
+              }
+            }
+          });
+        },
+
+        // Handle successful payment
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(orderData) {
+            window.paypalTransactionId = orderData.id;
+            console.log('Order captured:', orderData);
+            
+            // Show success message
+            alert('Payment successful! Order ID: ' + orderData.id);
+            
+            // Automatically proceed to review
+            document.getElementById('shipping-step').style.display = 'none';
+            document.getElementById('payment-step').style.display = 'none';
+            document.getElementById('review-step').style.display = 'block';
+            updateProgressBar(3);
+            populateReview();
+          });
+        },
+
+        // Handle errors
+        onError: function(err) {
+          console.error('PayPal error:', err);
+          alert('Payment failed. Please try again: ' + err);
+        },
+
+        // Handle cancellation
+        onCancel: function() {
+          console.log('Payment cancelled by user');
+          alert('Payment cancelled. You can try again or choose another payment method.');
+        }
+      }).render('#paypal-buttons');
+    }
+
+    // Initialize on page load
+    window.onload = function() {
+      updateCartCount();
+      loadCartSummary();
+      initPayPalButtons();
+    };
+  </script>
+</body>
+</html>

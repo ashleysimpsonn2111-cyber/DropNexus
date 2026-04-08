@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DropNexus - Fast Dropshipping Deals</title>
+  <link rel="stylesheet" href="Home.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <a href="Home.html" class="logo">DropNexus</a>
+      <div class="search-bar">
+        <input type="search" placeholder="Search products...">
+        <button>🔍</button>
+      </div>
+      <div class="nav-icons">
+        <a href="Cart.html" style="text-decoration: none; color: inherit;">🛒 <span class="cart-count">0</span></a>
+        <span>👤</span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Discover Epic Deals Daily</h1>
+      <p>Fast shipping worldwide. Shop now and save big!</p>
+      <button class="cta-btn">Shop Now</button>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="featured">
+    <h2>Featured Products</h2>
+    <div class="products-grid">
+      <div class="product-card">
+        <a href="Product.html"><img src="https://via.placeholder.com/300x300?text=Product+1" alt="Wireless Earbuds"></a>
+        <h3><a href="Product.html">Wireless Earbuds</a></h3>
+        <div class="price">$29.99</div>
+        <div class="rating">★★★★☆</div>
+        <button onclick="addToCart(1, 'Wireless Earbuds', 29.99, 'https://via.placeholder.com/100x100?text=Earbuds')">Add to Cart</button>
+      </div>
+      <!-- Repeat for 5 more cards -->
+      <div class="product-card">
+        <a href="Product.html"><img src="https://via.placeholder.com/300x300?text=Product+2" alt="Smart Watch"></a>
+        <h3><a href="Product.html">Smart Watch</a></h3>
+        <div class="price">$79.99</div>
+        <div class="rating">★★★★★</div>
+        <button onclick="addToCart(2, 'Smart Watch', 79.99, 'https://via.placeholder.com/100x100?text=Watch')">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <a href="Product.html"><img src="https://via.placeholder.com/300x300?text=Product+3" alt="Yoga Mat"></a>
+        <h3><a href="Product.html">Yoga Mat</a></h3>
+        <div class="price">$19.99</div>
+        <div class="rating">★★★★☆</div>
+        <button onclick="addToCart(3, 'Yoga Mat', 19.99, 'https://via.placeholder.com/100x100?text=Yoga+Mat')">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <a href="Product.html"><img src="https://via.placeholder.com/300x300?text=Product+4" alt="Phone Case"></a>
+        <h3><a href="Product.html">Phone Case</a></h3>
+        <div class="price">$12.99</div>
+        <div class="rating">★★★★★</div>
+        <button onclick="addToCart(4, 'Phone Case', 12.99, 'https://via.placeholder.com/100x100?text=Phone+Case')">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <a href="Product.html"><img src="https://via.placeholder.com/300x300?text=Product+5" alt="Headphones"></a>
+        <h3><a href="Product.html">Headphones</a></h3>
+        <div class="price">$49.99</div>
+        <div class="rating">★★★★☆</div>
+        <button onclick="addToCart(5, 'Headphones', 49.99, 'https://via.placeholder.com/100x100?text=Headphones')">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <a href="Product.html"><img src="https://via.placeholder.com/300x300?text=Product+6" alt="Backpack"></a>
+        <h3><a href="Product.html">Backpack</a></h3>
+        <div class="price">$39.99</div>
+        <div class="rating">★★★★★</div>
+        <button onclick="addToCart(6, 'Backpack', 39.99, 'https://via.placeholder.com/100x100?text=Backpack')">Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <h2>What Our Customers Say</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial">
+        <p>"Lightning fast delivery! Love my new earbuds."</p>
+        <span>- Sarah K.</span>
+      </div>
+      <div class="testimonial">
+        <p>"Best prices online. Highly recommend!"</p>
+        <span>- Mike D.</span>
+      </div>
+      <div class="testimonial">
+        <p>"Super easy shopping experience."</p>
+        <span>- Lisa M.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div>DropNexus © 2026. All rights reserved.</div>
+      <div>Privacy | Terms | Support</div>
+    </div>
+  </footer>
+
+  <script>
+    function addToCart(id, name, price, image) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let existingItem = cart.find(item => item.id === id);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({ id, name, price, image, quantity: 1 });
+      }
+      
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+      alert(name + ' added to cart!');
+    }
+
+    function updateCartCount() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.querySelector('.cart-count').textContent = totalItems;
+    }
+
+    // Update cart count on page load
+    window.onload = updateCartCount;
+  </script>
+</body>
+</html>
